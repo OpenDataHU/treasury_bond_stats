@@ -26,11 +26,37 @@ jobs:
           git config --global user.name "Crawler"
           git config --global user.email "null@github.com"
           git remote set-url --push origin https://d3n972:${GITHUB_TOKEN}@github.com/OpenDataHU/treasury_bond_stats.git
-      - name: Run a multi-line script
+      - name: Install dependencies
+        run: apt update&&apt install -y curl jq
+      - name: Fetch MAPP Prices
         run: |
-          apt update&&apt install -y curl jq
+          curl "https://www.allampapir.hu/api/network_rate/m/get_prices/MAPP" \
+           |jq -r '.data.data|(map(keys) | add | unique) as $cols | map(. as $row | $cols | map($row[.])) as $rows | $cols, $rows[] | @csv' \
+           > $(date "+MAPP-%Y-%m-%d.csv")
+      - name: Fetch MAP Prices
+        run: |
+          curl "https://www.allampapir.hu/api/network_rate/m/get_prices/MAP" \
+           |jq -r '.data.data|(map(keys) | add | unique) as $cols | map(. as $row | $cols | map($row[.])) as $rows | $cols, $rows[] | @csv' \
+           > $(date "+MAP-%Y-%m-%d.csv")
+      - name: Fetch 1MAP Prices
+        run: |
+          curl "https://www.allampapir.hu/api/network_rate/m/get_prices/1MAP" \
+           |jq -r '.data.data|(map(keys) | add | unique) as $cols | map(. as $row | $cols | map($row[.])) as $rows | $cols, $rows[] | @csv' \
+           > $(date "+1MAP-%Y-%m-%d.csv")  
+      - name: Fetch BABA Prices
+        run: |
+          curl "https://www.allampapir.hu/api/network_rate/m/get_prices/BABA" \
+           |jq -r '.data.data|(map(keys) | add | unique) as $cols | map(. as $row | $cols | map($row[.])) as $rows | $cols, $rows[] | @csv' \
+           > $(date "+BABA-%Y-%m-%d.csv")
+      - name: Fetch DKJ Prices
+        run: |
           curl "https://www.allampapir.hu/api/network_rate/m/get_prices/DKJ" \
            |jq -r '.data.data|(map(keys) | add | unique) as $cols | map(. as $row | $cols | map($row[.])) as $rows | $cols, $rows[] | @csv' \
-           > $(date "+DKJ-%Y-%m-%d.csv")
+           > $(date "+BABA-%Y-%m-%d.csv")
+      - name: Fetch EMAP Prices
+        run: |
+          curl "https://www.allampapir.hu/api/network_rate/m/get_prices/EMAP" \
+           |jq -r '.data.data|(map(keys) | add | unique) as $cols | map(. as $row | $cols | map($row[.])) as $rows | $cols, $rows[] | @csv' \
+           > $(date "+EMAP-%Y-%m-%d.csv")         
       - name: Commit data
-        run: git add *&& git commit -m "Update on $(date '+%Y-%m-%d')" && git push
+        run: git add * && git commit -m "Update on $(date '+%Y-%m-%d')" && git push
