@@ -27,7 +27,7 @@ jobs:
           git config --global user.email "null@github.com"
           git remote set-url --push origin https://d3n972:${GITHUB_TOKEN}@github.com/OpenDataHU/treasury_bond_stats.git
       - name: Install dependencies
-        run: apt update&&apt install -y curl jq
+        run: sudo apt update && sudo apt install -y curl jq
       - name: Fetch MAPP Prices
         run: |
           curl "https://www.allampapir.hu/api/network_rate/m/get_prices/MAPP" \
