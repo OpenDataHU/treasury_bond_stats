@@ -38,11 +38,6 @@ jobs:
           curl "https://www.allampapir.hu/api/network_rate/m/get_prices/MAP" \
            |jq -r '.data.data|(map(keys) | add | unique) as $cols | map(. as $row | $cols | map($row[.])) as $rows | $cols, $rows[] | @csv' \
            > $(date "+MAP-%Y-%m-%d.csv")
-      - name: Fetch 1MAP Prices
-        run: |
-          curl "https://www.allampapir.hu/api/network_rate/m/get_prices/1MAP" \
-           |jq -r '.data.data|(map(keys) | add | unique) as $cols | map(. as $row | $cols | map($row[.])) as $rows | $cols, $rows[] | @csv' \
-           > $(date "+1MAP-%Y-%m-%d.csv")  
       - name: Fetch BABA Prices
         run: |
           curl "https://www.allampapir.hu/api/network_rate/m/get_prices/BABA" \
